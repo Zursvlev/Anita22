@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкета для родителей: Добрые дела — добрые сердца</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0ebf8 0%, #e8f5e9 100%);
+            margin: 0;
+            padding: 20px;
+            color: #202124;
+            line-height: 1.5;
+        }
+        .form-container { max-width: 680px; margin: 0 auto; }
+        .form-header {
+            background-color: #fff;
+            border-top: 10px solid #673ab7;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .form-header h1 {
+            font-size: 28px; margin: 0 0 12px 0; font-weight: 600; color: #1a1a1a;
+        }
+        .parent-greeting {
+            background: linear-gradient(135deg, #673ab7, #9575cd);
+            color: white; padding: 16px 20px; border-radius: 8px;
+            margin: 16px 0; font-size: 15px;
+        }
+        .parent-greeting strong { display: block; margin-bottom: 6px; font-size: 16px; }
+        .form-header p { font-size: 14px; color: #5f6368; margin: 8px 0; }
+        .age-note {
+            background-color: #e8f5e9; border-left: 4px solid #4caf50;
+            padding: 10px 16px; border-radius: 0 6px 6px 0;
+            font-size: 13px; margin-top: 12px; color: #2e7d32;
+        }
+        .question-card {
+            background-color: #fff; border-radius: 10px; padding: 24px;
+            margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            border-left: 4px solid transparent; transition: all 0.2s ease;
+        }
+        .question-card:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+        .question-card:focus-within {
+            border-left-color: #673ab7;
+            box-shadow: 0 2px 8px rgba(103, 58, 183, 0.15);
+        }
+        .question-title {
+            font-size: 16px; margin-bottom: 14px; font-weight: 500; color: #1a1a1a;
+        }
+        .question-hint {
+            font-size: 13px; color: #757575; margin-bottom: 12px; font-style: italic;
+        }
+        .required-mark { color: #d93025; margin-left: 3px; }
+        input[type="text"], input[type="email"], input[type="number"],
+        textarea, select {
+            width: 100%; padding: 10px 0; border: none;
+            border-bottom: 1px solid #dadce0; font-size: 15px;
+            font-family: inherit; background-color: transparent;
+            transition: border-bottom 0.2s; outline: none; box-sizing: border-box;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-bottom: 2px solid #673ab7; padding-bottom: 9px;
+        }
+        textarea { resize: vertical; min-height: 50px; line-height: 1.4; }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 12px; }
+        .option-label {
+            display: flex; align-items: flex-start; font-size: 14px;
+            cursor: pointer; padding: 6px 4px; border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .option-label:hover { background-color: #f8f9fa; }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 12px; margin-top: 3px; accent-color: #673ab7;
+            transform: scale(1.1); flex-shrink: 0;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #673ab7, #7e57c2);
+            color: white; border: none; padding: 12px 32px; border-radius: 6px;
+            font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 16px;
+            transition: all 0.2s; box-shadow: 0 2px 4px rgba(103, 58, 183, 0.3);
+        }
+        .submit-btn:hover {
+
+background: linear-gradient(135deg, #5e35b1, #673ab7);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(103, 58, 183, 0.4);
+        }
+        .submit-btn:disabled {
+            background: #bdbdbd; cursor: not-allowed; transform: none;
+            box-shadow: none;
+        }
+        #success-message, #error-message {
+            display: none; background-color: #fff; border-radius: 12px;
+            padding: 40px 30px; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #success-message h2 { color: #673ab7; margin: 0 0 12px 0; font-size: 24px; }
+        #success-message p { color: #5f6368; margin: 0; font-size: 15px; }
+        #error-message { background-color: #ffebee; border-left: 4px solid #d93025; }
+        #error-message h3 { color: #d93025; margin: 0 0 8px 0; }
+        .form-footer {
+            text-align: center; padding: 20px; color: #757575; font-size: 13px;
+        }
+        .heart-icon { color: #e91e63; margin: 0 2px; }
+        .loading {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: white;
+            animation: spin 1s linear infinite; margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .form-header { padding: 22px 18px; }
+            .form-header h1 { font-size: 22px; }
+            .question-card { padding: 20px 18px; }
+            .question-title { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    
+    <!-- Заголовок -->
+    <div class="form-header">
+        <h1>🌟 Добрые дела — добрые сердца 🌟</h1>
+        
+        <div class="parent-greeting">
+            <strong>Уважаемые родители!</strong>
+            Приглашаем вас принять участие в нашем проекте, направленном на воспитание доброты и эмпатии у детей старшей группы. Ваши ответы помогут нам создать тёплую, поддерживающую среду, в которой каждый ребёнок научится заботиться о других.
+        </div>
+        
+        <p><strong>Цель анкеты:</strong> узнать, как в вашей семье воспитывают доброту, и найти лучшие способы поддержать детей в их стремлении делать добрые дела.</p>
+        
+        <div class="age-note">
+            💡 <strong>Для кого:</strong> родители и законные представители детей старшей группы (5–7 лет)
+        </div>
+        
+        <p style="margin-top: 14px; font-size: 12px; color: #d93025;">* Обязательный вопрос</p>
+    </div>
+
+    <!-- 
+      🔹 ВАЖНО: Замените "ВАШ_FORMSPREE_ID" на ваш реальный endpoint от Formspree
+      Пример: action="https://formspree.io/f/xmqkbjwl"
+    -->
+    <form id="kindnessForm" action="https://formspree.io/f/ВАШ_FORMSPREE_ID" method="POST">
+        
+        <!-- Скрытые поля для настройки Formspree -->
+        <input type="hidden" name="_subject" value="📋 Новая анкета: Добрые сердца">
+        <input type="hidden" name="_cc" value="anito5ka2712006@gmail.com">
+        <input type="hidden" name="_next" value=""> <!-- Заполнится скриптом -->
+        <input type="hidden" name="_language" value="ru">
+
+        <!-- Контактные данные -->
+        <div class="question-card">
+            <div class="question-title">ФИО родителя (заполняющего анкету) <span class="required-mark">*</span></div>
+            <input type="text" name="ФИО_родителя" required placeholder="Иванова Мария Сергеевна">
+        </div>
+
+        <div class="question-card">
+
+<div class="question-title">Имя и возраст вашего ребёнка <span class="required-mark">*</span></div>
+            <input type="text" name="Ребёнок" required placeholder="Анна, 6 лет">
+            <div class="question-hint">Пожалуйста, укажите имя и точный возраст</div>
+        </div>
+
+        <!-- Воспитание доброты -->
+        <div class="question-card">
+            <div class="question-title">Как вы объясняете ребёнку, что такое «доброта»? <span class="required-mark">*</span></div>
+            <textarea name="Объяснение_доброты" rows="3" required placeholder="Например: «Доброта — это когда ты помогаешь другим, делишься, говоришь хорошие слова...»"></textarea>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Как часто вы обсуждаете с ребёнком темы доброты и помощи? <span class="required-mark">*</span></div>
+            <div class="radio-group">
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Почти каждый день" required>
+                    Почти каждый день
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Раз в неделю">
+                    Раз в неделю
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Время от времени">
+                    Время от времени, по случаю
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Редко или никогда">
+                    Редко или никогда
+                </label>
+            </div>
+        </div>
+
+        <!-- Практика добрых дел -->
+        <div class="question-card">
+            <div class="question-title">Какие добрые дела ваш ребёнок уже умеет делать самостоятельно? (Можно выбрать несколько)</div>
+            <div class="checkbox-group">
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Делится игрушками">
+                    Делиться игрушками, вещами
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Помогает по дому">
+                    Помогать по дому (убирать, накрывать на стол)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Утешает других">
+                    Утешать, поддерживать других детей
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Заботится о животных">
+                    Заботиться о животных, птицах
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Бережёт природу">
+                    Бережно относиться к природе (не ломать ветки, не мусорить)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Говорит добрые слова">
+                    Говорить добрые слова, делать комплименты
+                </label>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Расскажите о случае, когда ваш ребёнок сделал доброе дело. Что это было и как вы отреагировали?</div>
+            <textarea name="История_доброго_дела" rows="4" placeholder="Поделитесь историей — это вдохновляет других!"></textarea>
+        </div>
+
+        <!-- Поддержка и взаимодействие -->
+        <div class="question-card">
+            <div class="question-title">Какие формы участия в «добрых делах» вы считаете подходящими для детей 5–7 лет?</div>
+
+<div class="checkbox-group">
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Поделки и открытки">
+                    Изготовление открыток, поделок для близких
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Сбор вещей">
+                    Сбор игрушек, книг для нуждающихся
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Эко-акции">
+                    Участие в эко-акциях (посадка цветов, уборка)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Визиты к пожилым">
+                    Визиты к пожилым людям (с подарками, концертом)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Помощь животным">
+                    Помощь приюту для животных (корм, игрушки)
+                </label>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Готовы ли вы и ваш ребёнок участвовать в групповых добрых делах вместе с детским садом?</div>
+            <div class="radio-group">
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Да, с радостью!">
+                    Да, с радостью!
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Возможно, зависит от формата">
+                    Возможно, зависит от формата и времени
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Пока не готовы">
+                    Пока не готовы
+                </label>
+            </div>
+        </div>
+
+        <!-- Обратная связь -->
+        <div class="question-card">
+            <div class="question-title">Что, на ваш взгляд, поможет детям лучше понимать ценность добрых поступков?</div>
+            <textarea name="Предложения" rows="3" placeholder="Ваши идеи и предложения..."></textarea>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Ваш контакт для связи (если захотите участвовать в проектах)</div>
+            <input type="email" name="Email_для_связи" placeholder="example@email.ru">
+            <div class="question-hint">Указывается по желанию. Мы не передаём данные третьим лицам.</div>
+        </div>
+
+        <!-- Кнопка -->
+        <button type="submit" class="submit-btn" id="submitBtn">✨ Отправить анкету</button>
+    </form>
+
+    <!-- Сообщения -->
+    <div id="success-message">
+        <h2>❤️ Спасибо вам, дорогие родители!</h2>
+        <p>Ваши ответы успешно отправлены. Вместе мы воспитаем поколение с добрыми сердцами!</p>
+        <p style="margin-top: 16px; font-size: 14px; color: #757575;">
+            Письмо с ответами отправлено на: <strong>anito5ka2712006@gmail.com</strong>
+        </p>
+        <button onclick="location.reload()" class="submit-btn" style="margin-top: 24px;">Заполнить ещё раз</button>
+    </div>
+
+    <div id="error-message">
+        <h3>⚠️ Ошибка отправки</h3>
+        <p>Не удалось отправить анкету. Пожалуйста, проверьте подключение к интернету и попробуйте ещё раз.</p>
+        <button onclick="location.reload()" class="submit-btn" style="margin-top: 16px; background: #673ab7;">Попробовать снова</button>
+    </div>
+
+    <!-- Футер -->
+    <div class="form-footer">
+        Проект «Добрые дела — добрые сердца» <span class="heart-icon">❤️</span><br>
+        Старшая группа, 2026 г.
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('kindnessForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerHTML;
+        
+        // Валидация обязательных полей
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.style.borderBottom = '2px solid #d93025';
+            } else {
+                field.style.borderBottom = '1px solid #dadce0';
+            }
+        });
+        
+        if (!isValid) {
+            alert('Пожалуйста, заполните все обязательные поля, отмеченные *');
+            return;
+        }
+        
+        // Блокируем кнопку и показываем загрузку
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading"></span>Отправка...';
+        
+        // Собираем данные формы
+        const formData = new FormData(form);
+        
+        // Для чекбоксов с одинаковыми именами собираем все значения в строку
+        const groupedData = {};
+        for (let [key, value] of formData.entries()) {
+            if (groupedData[key]) {
+                if (Array.isArray(groupedData[key])) {
+                    groupedData[key].push(value);
+                } else {
+                    groupedData[key] = [groupedData[key], value];
+                }
+            } else {
+                groupedData[key] = value;
+            }
+        }
+        
+        // Преобразуем массивы в читаемый формат
+        for (let key in groupedData) {
+            if (Array.isArray(groupedData[key])) {
+                groupedData[key] = groupedData[key].join(', ');
+            }
+        }
+        
+        try {
+            // Отправляем данные на Formspree
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: JSON.stringify(groupedData),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                // Успех
+                document.querySelector('.form-header').style.display = 'none';
+                form.style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                throw new Error('Ошибка сервера');
+            }
+        } catch (error) {
+            console.error('Ошибка отправки:', error);
+            // Показываем ошибку
+            document.querySelector('.form-header').style.display = 'none';
+            form.style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } finally {
+            // Возвращаем кнопку (на случай, если пользователь вернётся назад)
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    });
+
+    // Убираем подсветку ошибки при вводе
+    document.querySelectorAll('input[required], textarea[required]').forEach(field => {
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.style.borderBottom = '1px solid #dadce0';
+            }
+        });
+    });
+
+    // Автоматически подставляем текущий URL в _next для возврата после отправки (опционально)
+    document.addEventListener('DOMContentLoaded', function() {
+        const nextField = document.querySelector('input[name="_next"]');
+        if (nextField && !nextField.value) {
+            nextField.value = window.location.href + '#success';
+        }
+    });
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкета для родителей: Добрые дела — добрые сердца</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f0ebf8 0%, #e8f5e9 100%);
+            margin: 0;
+            padding: 20px;
+            color: #202124;
+            line-height: 1.5;
+        }
+        .form-container { max-width: 680px; margin: 0 auto; }
+        .form-header {
+            background-color: #fff;
+            border-top: 10px solid #673ab7;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .form-header h1 {
+            font-size: 28px; margin: 0 0 12px 0; font-weight: 600; color: #1a1a1a;
+        }
+        .parent-greeting {
+            background: linear-gradient(135deg, #673ab7, #9575cd);
+            color: white; padding: 16px 20px; border-radius: 8px;
+            margin: 16px 0; font-size: 15px;
+        }
+        .parent-greeting strong { display: block; margin-bottom: 6px; font-size: 16px; }
+        .form-header p { font-size: 14px; color: #5f6368; margin: 8px 0; }
+        .age-note {
+            background-color: #e8f5e9; border-left: 4px solid #4caf50;
+            padding: 10px 16px; border-radius: 0 6px 6px 0;
+            font-size: 13px; margin-top: 12px; color: #2e7d32;
+        }
+        .question-card {
+            background-color: #fff; border-radius: 10px; padding: 24px;
+            margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            border-left: 4px solid transparent; transition: all 0.2s ease;
+        }
+        .question-card:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+        .question-card:focus-within {
+            border-left-color: #673ab7;
+            box-shadow: 0 2px 8px rgba(103, 58, 183, 0.15);
+        }
+        .question-title {
+            font-size: 16px; margin-bottom: 14px; font-weight: 500; color: #1a1a1a;
+        }
+        .question-hint {
+            font-size: 13px; color: #757575; margin-bottom: 12px; font-style: italic;
+        }
+        .required-mark { color: #d93025; margin-left: 3px; }
+        input[type="text"], input[type="email"], input[type="number"],
+        textarea, select {
+            width: 100%; padding: 10px 0; border: none;
+            border-bottom: 1px solid #dadce0; font-size: 15px;
+            font-family: inherit; background-color: transparent;
+            transition: border-bottom 0.2s; outline: none; box-sizing: border-box;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-bottom: 2px solid #673ab7; padding-bottom: 9px;
+        }
+        textarea { resize: vertical; min-height: 50px; line-height: 1.4; }
+        .radio-group, .checkbox-group { display: flex; flex-direction: column; gap: 12px; }
+        .option-label {
+            display: flex; align-items: flex-start; font-size: 14px;
+            cursor: pointer; padding: 6px 4px; border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .option-label:hover { background-color: #f8f9fa; }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 12px; margin-top: 3px; accent-color: #673ab7;
+            transform: scale(1.1); flex-shrink: 0;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #673ab7, #7e57c2);
+            color: white; border: none; padding: 12px 32px; border-radius: 6px;
+            font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 16px;
+            transition: all 0.2s; box-shadow: 0 2px 4px rgba(103, 58, 183, 0.3);
+        }
+        .submit-btn:hover {
+
+background: linear-gradient(135deg, #5e35b1, #673ab7);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(103, 58, 183, 0.4);
+        }
+        .submit-btn:disabled {
+            background: #bdbdbd; cursor: not-allowed; transform: none;
+            box-shadow: none;
+        }
+        #success-message, #error-message {
+            display: none; background-color: #fff; border-radius: 12px;
+            padding: 40px 30px; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #success-message h2 { color: #673ab7; margin: 0 0 12px 0; font-size: 24px; }
+        #success-message p { color: #5f6368; margin: 0; font-size: 15px; }
+        #error-message { background-color: #ffebee; border-left: 4px solid #d93025; }
+        #error-message h3 { color: #d93025; margin: 0 0 8px 0; }
+        .form-footer {
+            text-align: center; padding: 20px; color: #757575; font-size: 13px;
+        }
+        .heart-icon { color: #e91e63; margin: 0 2px; }
+        .loading {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: white;
+            animation: spin 1s linear infinite; margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .form-header { padding: 22px 18px; }
+            .form-header h1 { font-size: 22px; }
+            .question-card { padding: 20px 18px; }
+            .question-title { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    
+    <!-- Заголовок -->
+    <div class="form-header">
+        <h1>🌟 Добрые дела — добрые сердца 🌟</h1>
+        
+        <div class="parent-greeting">
+            <strong>Уважаемые родители!</strong>
+            Приглашаем вас принять участие в нашем проекте, направленном на воспитание доброты и эмпатии у детей старшей группы. Ваши ответы помогут нам создать тёплую, поддерживающую среду, в которой каждый ребёнок научится заботиться о других.
+        </div>
+        
+        <p><strong>Цель анкеты:</strong> узнать, как в вашей семье воспитывают доброту, и найти лучшие способы поддержать детей в их стремлении делать добрые дела.</p>
+        
+        <div class="age-note">
+            💡 <strong>Для кого:</strong> родители и законные представители детей старшей группы (5–7 лет)
+        </div>
+        
+        <p style="margin-top: 14px; font-size: 12px; color: #d93025;">* Обязательный вопрос</p>
+    </div>
+
+    <!-- 
+      🔹 ВАЖНО: Замените "ВАШ_FORMSPREE_ID" на ваш реальный endpoint от Formspree
+      Пример: action="https://formspree.io/f/xmqkbjwl"
+    -->
+    <form id="kindnessForm" action="https://formspree.io/f/ВАШ_FORMSPREE_ID" method="POST">
+        
+        <!-- Скрытые поля для настройки Formspree -->
+        <input type="hidden" name="_subject" value="📋 Новая анкета: Добрые сердца">
+        <input type="hidden" name="_cc" value="anito5ka2712006@gmail.com">
+        <input type="hidden" name="_next" value=""> <!-- Заполнится скриптом -->
+        <input type="hidden" name="_language" value="ru">
+
+        <!-- Контактные данные -->
+        <div class="question-card">
+            <div class="question-title">ФИО родителя (заполняющего анкету) <span class="required-mark">*</span></div>
+            <input type="text" name="ФИО_родителя" required placeholder="Иванова Мария Сергеевна">
+        </div>
+
+        <div class="question-card">
+
+<div class="question-title">Имя и возраст вашего ребёнка <span class="required-mark">*</span></div>
+            <input type="text" name="Ребёнок" required placeholder="Анна, 6 лет">
+            <div class="question-hint">Пожалуйста, укажите имя и точный возраст</div>
+        </div>
+
+        <!-- Воспитание доброты -->
+        <div class="question-card">
+            <div class="question-title">Как вы объясняете ребёнку, что такое «доброта»? <span class="required-mark">*</span></div>
+            <textarea name="Объяснение_доброты" rows="3" required placeholder="Например: «Доброта — это когда ты помогаешь другим, делишься, говоришь хорошие слова...»"></textarea>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Как часто вы обсуждаете с ребёнком темы доброты и помощи? <span class="required-mark">*</span></div>
+            <div class="radio-group">
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Почти каждый день" required>
+                    Почти каждый день
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Раз в неделю">
+                    Раз в неделю
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Время от времени">
+                    Время от времени, по случаю
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Частота_обсуждений" value="Редко или никогда">
+                    Редко или никогда
+                </label>
+            </div>
+        </div>
+
+        <!-- Практика добрых дел -->
+        <div class="question-card">
+            <div class="question-title">Какие добрые дела ваш ребёнок уже умеет делать самостоятельно? (Можно выбрать несколько)</div>
+            <div class="checkbox-group">
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Делится игрушками">
+                    Делиться игрушками, вещами
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Помогает по дому">
+                    Помогать по дому (убирать, накрывать на стол)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Утешает других">
+                    Утешать, поддерживать других детей
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Заботится о животных">
+                    Заботиться о животных, птицах
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Бережёт природу">
+                    Бережно относиться к природе (не ломать ветки, не мусорить)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Умения_ребёнка" value="Говорит добрые слова">
+                    Говорить добрые слова, делать комплименты
+                </label>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Расскажите о случае, когда ваш ребёнок сделал доброе дело. Что это было и как вы отреагировали?</div>
+            <textarea name="История_доброго_дела" rows="4" placeholder="Поделитесь историей — это вдохновляет других!"></textarea>
+        </div>
+
+        <!-- Поддержка и взаимодействие -->
+        <div class="question-card">
+            <div class="question-title">Какие формы участия в «добрых делах» вы считаете подходящими для детей 5–7 лет?</div>
+
+<div class="checkbox-group">
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Поделки и открытки">
+                    Изготовление открыток, поделок для близких
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Сбор вещей">
+                    Сбор игрушек, книг для нуждающихся
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Эко-акции">
+                    Участие в эко-акциях (посадка цветов, уборка)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Визиты к пожилым">
+                    Визиты к пожилым людям (с подарками, концертом)
+                </label>
+                <label class="option-label">
+                    <input type="checkbox" name="Подходящие_форматы" value="Помощь животным">
+                    Помощь приюту для животных (корм, игрушки)
+                </label>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Готовы ли вы и ваш ребёнок участвовать в групповых добрых делах вместе с детским садом?</div>
+            <div class="radio-group">
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Да, с радостью!">
+                    Да, с радостью!
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Возможно, зависит от формата">
+                    Возможно, зависит от формата и времени
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="Готовность_участвовать" value="Пока не готовы">
+                    Пока не готовы
+                </label>
+            </div>
+        </div>
+
+        <!-- Обратная связь -->
+        <div class="question-card">
+            <div class="question-title">Что, на ваш взгляд, поможет детям лучше понимать ценность добрых поступков?</div>
+            <textarea name="Предложения" rows="3" placeholder="Ваши идеи и предложения..."></textarea>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title">Ваш контакт для связи (если захотите участвовать в проектах)</div>
+            <input type="email" name="Email_для_связи" placeholder="example@email.ru">
+            <div class="question-hint">Указывается по желанию. Мы не передаём данные третьим лицам.</div>
+        </div>
+
+        <!-- Кнопка -->
+        <button type="submit" class="submit-btn" id="submitBtn">✨ Отправить анкету</button>
+    </form>
+
+    <!-- Сообщения -->
+    <div id="success-message">
+        <h2>❤️ Спасибо вам, дорогие родители!</h2>
+        <p>Ваши ответы успешно отправлены. Вместе мы воспитаем поколение с добрыми сердцами!</p>
+        <p style="margin-top: 16px; font-size: 14px; color: #757575;">
+            Письмо с ответами отправлено на: <strong>anito5ka2712006@gmail.com</strong>
+        </p>
+        <button onclick="location.reload()" class="submit-btn" style="margin-top: 24px;">Заполнить ещё раз</button>
+    </div>
+
+    <div id="error-message">
+        <h3>⚠️ Ошибка отправки</h3>
+        <p>Не удалось отправить анкету. Пожалуйста, проверьте подключение к интернету и попробуйте ещё раз.</p>
+        <button onclick="location.reload()" class="submit-btn" style="margin-top: 16px; background: #673ab7;">Попробовать снова</button>
+    </div>
+
+    <!-- Футер -->
+    <div class="form-footer">
+        Проект «Добрые дела — добрые сердца» <span class="heart-icon">❤️</span><br>
+        Старшая группа, 2026 г.
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('kindnessForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerHTML;
+        
+        // Валидация обязательных полей
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.style.borderBottom = '2px solid #d93025';
+            } else {
+                field.style.borderBottom = '1px solid #dadce0';
+            }
+        });
+        
+        if (!isValid) {
+            alert('Пожалуйста, заполните все обязательные поля, отмеченные *');
+            return;
+        }
+        
+        // Блокируем кнопку и показываем загрузку
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loading"></span>Отправка...';
+        
+        // Собираем данные формы
+        const formData = new FormData(form);
+        
+        // Для чекбоксов с одинаковыми именами собираем все значения в строку
+        const groupedData = {};
+        for (let [key, value] of formData.entries()) {
+            if (groupedData[key]) {
+                if (Array.isArray(groupedData[key])) {
+                    groupedData[key].push(value);
+                } else {
+                    groupedData[key] = [groupedData[key], value];
+                }
+            } else {
+                groupedData[key] = value;
+            }
+        }
+        
+        // Преобразуем массивы в читаемый формат
+        for (let key in groupedData) {
+            if (Array.isArray(groupedData[key])) {
+                groupedData[key] = groupedData[key].join(', ');
+            }
+        }
+        
+        try {
+            // Отправляем данные на Formspree
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: JSON.stringify(groupedData),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                // Успех
+                document.querySelector('.form-header').style.display = 'none';
+                form.style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                throw new Error('Ошибка сервера');
+            }
+        } catch (error) {
+            console.error('Ошибка отправки:', error);
+            // Показываем ошибку
+            document.querySelector('.form-header').style.display = 'none';
+            form.style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } finally {
+            // Возвращаем кнопку (на случай, если пользователь вернётся назад)
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    });
+
+    // Убираем подсветку ошибки при вводе
+    document.querySelectorAll('input[required], textarea[required]').forEach(field => {
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.style.borderBottom = '1px solid #dadce0';
+            }
+        });
+    });
+
+    // Автоматически подставляем текущий URL в _next для возврата после отправки (опционально)
+    document.addEventListener('DOMContentLoaded', function() {
+        const nextField = document.querySelector('input[name="_next"]');
+        if (nextField && !nextField.value) {
+            nextField.value = window.location.href + '#success';
+        }
+    });
+</script>
+
+</body>
+</html>
